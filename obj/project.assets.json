@@ -188,19 +188,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\MUHAMMAD YAAR\\.nuget\\packages\\": {}
+    "C:\\Users\\asimw\\.nuget\\packages\\": {},
+    "D:\\Applications\\Visual Studio Data\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\MUHAMMAD YAAR\\Documents\\ExcelDataReader-master\\ExceldataDisplayAxontick.vbproj",
+      "projectUniqueName": "D:\\Work\\Programming\\Visual Studio 2022\\C#\\.Net Framework\\Windows Form\\ExcelDataReader\\ExceldataDisplayAxontick.vbproj",
       "projectName": "ExceldataDisplayAxontick",
-      "projectPath": "C:\\Users\\MUHAMMAD YAAR\\Documents\\ExcelDataReader-master\\ExceldataDisplayAxontick.vbproj",
-      "packagesPath": "C:\\Users\\MUHAMMAD YAAR\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\MUHAMMAD YAAR\\Documents\\ExcelDataReader-master\\obj\\",
+      "projectPath": "D:\\Work\\Programming\\Visual Studio 2022\\C#\\.Net Framework\\Windows Form\\ExcelDataReader\\ExceldataDisplayAxontick.vbproj",
+      "packagesPath": "C:\\Users\\asimw\\.nuget\\packages\\",
+      "outputPath": "D:\\Work\\Programming\\Visual Studio 2022\\C#\\.Net Framework\\Windows Form\\ExcelDataReader\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "D:\\Applications\\Visual Studio Data\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\MUHAMMAD YAAR\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\asimw\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -208,6 +213,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -254,7 +260,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.401\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100-rc.2.22477.23\\RuntimeIdentifierGraph.json"
       }
     }
   }
