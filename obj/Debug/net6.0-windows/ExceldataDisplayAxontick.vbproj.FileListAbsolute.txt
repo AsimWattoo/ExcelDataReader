@@ -1,0 +1,67 @@
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\bin\Debug\net6.0-windows\ExceldataDisplayAxontick.exe
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\bin\Debug\net6.0-windows\ExceldataDisplayAxontick.deps.json
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\bin\Debug\net6.0-windows\ExceldataDisplayAxontick.runtimeconfig.json
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\bin\Debug\net6.0-windows\ExceldataDisplayAxontick.dll
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\bin\Debug\net6.0-windows\ExceldataDisplayAxontick.pdb
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.vbproj.AssemblyReference.cache
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.Form1.resources
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.vbproj.GenerateResource.cache
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.AssemblyInfoInputs.cache
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.AssemblyInfo.vb
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.vbproj.CoreCompileInputs.cache
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.dll
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\obj\Debug\net6.0-windows\refint\ExceldataDisplayAxontick.dll
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.pdb
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.genruntimeconfig.cache
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\obj\Debug\net6.0-windows\ref\ExceldataDisplayAxontick.dll
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\bin\Debug\net6.0-windows\ExcelDataReader.dll
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\bin\Debug\net6.0-windows\ExcelDataReader.DataSet.dll
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.vbproj.CopyComplete
+C:\Users\MUHAMMAD YAAR\source\repos\ExceldataDisplayAxontick\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.Form2.resources
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\bin\Debug\net6.0-windows\ExceldataDisplayAxontick.exe
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\bin\Debug\net6.0-windows\ExceldataDisplayAxontick.deps.json
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\bin\Debug\net6.0-windows\ExceldataDisplayAxontick.runtimeconfig.json
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\bin\Debug\net6.0-windows\ExceldataDisplayAxontick.dll
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\bin\Debug\net6.0-windows\ExceldataDisplayAxontick.pdb
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\bin\Debug\net6.0-windows\ExcelDataReader.dll
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\bin\Debug\net6.0-windows\ExcelDataReader.DataSet.dll
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.vbproj.AssemblyReference.cache
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.Form1.resources
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.Form2.resources
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.vbproj.GenerateResource.cache
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.GeneratedMSBuildEditorConfig.editorconfig
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.AssemblyInfoInputs.cache
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.AssemblyInfo.vb
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.vbproj.CoreCompileInputs.cache
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.vbproj.CopyComplete
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.dll
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\obj\Debug\net6.0-windows\refint\ExceldataDisplayAxontick.dll
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.pdb
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.genruntimeconfig.cache
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\obj\Debug\net6.0-windows\ref\ExceldataDisplayAxontick.dll
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\bin\Debug\net6.0-windows\System.Text.Encoding.CodePages.dll
+D:\Work\Programming\Visual Studio 2022\C#\.Net Framework\Windows Form\ExcelDataReader\bin\Debug\net6.0-windows\runtimes\win\lib\net6.0\System.Text.Encoding.CodePages.dll
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\bin\Debug\net6.0-windows\ExceldataDisplayAxontick.exe
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\bin\Debug\net6.0-windows\ExceldataDisplayAxontick.deps.json
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\bin\Debug\net6.0-windows\ExceldataDisplayAxontick.runtimeconfig.json
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\bin\Debug\net6.0-windows\ExceldataDisplayAxontick.dll
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\bin\Debug\net6.0-windows\ExceldataDisplayAxontick.pdb
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\bin\Debug\net6.0-windows\ExcelDataReader.dll
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\bin\Debug\net6.0-windows\ExcelDataReader.DataSet.dll
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\bin\Debug\net6.0-windows\System.Text.Encoding.CodePages.dll
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\bin\Debug\net6.0-windows\runtimes\win\lib\net6.0\System.Text.Encoding.CodePages.dll
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.vbproj.AssemblyReference.cache
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.Form1.resources
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.Form2.resources
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.vbproj.GenerateResource.cache
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.AssemblyInfoInputs.cache
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.AssemblyInfo.vb
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.vbproj.CoreCompileInputs.cache
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.vbproj.CopyComplete
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.dll
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\obj\Debug\net6.0-windows\refint\ExceldataDisplayAxontick.dll
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.pdb
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.genruntimeconfig.cache
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\obj\Debug\net6.0-windows\ref\ExceldataDisplayAxontick.dll
