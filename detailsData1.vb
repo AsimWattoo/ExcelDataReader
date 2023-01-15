@@ -1,14 +1,16 @@
 ﻿Public Class detailsData1
-    Public Property columnOne As Integer
-    Public Property columnTwo As Integer
-    Public Property columnThree As Integer
-    Public Property columnFour As Integer
-    Public Property columnFive As Integer
+    Public Property DateColumn As Integer
+    Public Property StartTimeColumn As Integer
+    Public Property TotalTimeColumn As Integer
+    Public Property TitleColumn As Integer
+    Public Property DetailsColumn As Integer
+
     Public Sub detailsData1()
-        columnOne = 2
-        columnTwo = 3
-        columnThree = 4
-        columnFour = 6
-        columnFive = 7
+        DateColumn = 2
+        StartTimeColumn = 3
+        TotalTimeColumn = 4
+        TitleColumn = 6
+        DetailsColumn = 7
     End Sub
+
 End Class
