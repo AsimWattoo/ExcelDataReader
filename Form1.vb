@@ -12,6 +12,7 @@ Public Class Form1
     Private patternObject As Form2 = New Form2
     Private ColumnData As detailsData1 = New detailsData1
     Private patternLines As List(Of List(Of String)) = New List(Of List(Of String))()
+    Private parsedLineNew As List(Of List(Of String)) = New List(Of List(Of String))
     Private currentlyOpennedFile As String = Nothing
 
 
@@ -60,7 +61,7 @@ Public Class Form1
 
         End If
 
-            If e.ColumnIndex < 1 Then
+        If e.ColumnIndex < 1 Then
             Dim rect As Rectangle = New Rectangle(e.CellBounds.Left, e.CellBounds.Top, e.CellBounds.Width, e.CellBounds.Height)
             e.Graphics.FillRectangle(New SolidBrush(Color.FromArgb(68, 115, 197)), rect)
             e.Graphics.DrawRectangle(New Pen(Color.White), rect)
@@ -142,6 +143,7 @@ Public Class Form1
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance)
         parsedData.Clear()
         parsedLines.Clear()
+        parsedLineNew.Clear()
         lines.Clear()
         dates.Clear()
         Dim initialDates As List(Of Date) = New List(Of Date)
@@ -151,11 +153,6 @@ Public Class Form1
         lines = File.ReadAllLines(fileName, Encoding.GetEncoding("Shift-JIS")).ToList()
 
         dates.Add("")
-        'For i As Integer = 0 To lines.Count - 1
-        '    If Not i = ColumnData.columnOne Or Not i = ColumnData.columnTwo Or Not i = ColumnData.columnThree Or Not i = ColumnData.columnFour Or Not i = ColumnData.columnFive Then
-        '        lines.RemoveAt(i)
-        '    End If
-        'Next
         Dim data As String()
 
         For i As Integer = 0 To lines.Count - 1
@@ -195,20 +192,27 @@ Public Class Form1
             table.Columns.Add(d)
         Next
 
+        Dim previousHour = 0
+        For Each line As List(Of String) In parsedLines
+            Dim time As DateTime = DateTime.Parse(line(1))
+            If Not (previousHour = time.Hour) Then
+                parsedLineNew.Add(line)
+                previousHour = time.Hour
+            End If
+        Next
+
         For i As Integer = 0 To dates.Count - 1
             parsedData.Add(dates(i), New List(Of List(Of String)))
         Next
 
-        For Each line As List(Of String) In parsedLines
+        For Each line As List(Of String) In parsedLineNew
             Dim currentDate As String = line(0)
             If parsedData.ContainsKey(currentDate) Then
                 parsedData(currentDate).Add(line)
             End If
         Next
-
-
         'Adding rows
-        For Each line As List(Of String) In parsedLines
+        For Each line As List(Of String) In parsedLineNew
             items = New List(Of Object)()
             Dim currentTime As String = line(1)
 
@@ -217,6 +221,9 @@ Public Class Form1
             End If
 
             items.Add(currentTime)
+            If Not items.Contains(currentTime) Then
+                items.Add(currentTime)
+            End If
             For i As Integer = 2 To dates.Count - 1
                 Dim item As List(Of String) = parsedData(dates(i)).Where(Function(x) As Boolean
                                                                              Return x(1).Equals(currentTime)
@@ -231,11 +238,9 @@ Public Class Form1
             table.Rows.Add(items.ToArray())
         Next
 
-
-
         DataGridView1.DataSource = table
 
-        For i As Integer = 0 To parsedLines.Count - 1
+        For i As Integer = 0 To parsedLineNew.Count - 1
             DataGridView1.Rows.Item(i).Height = 100
         Next
 
