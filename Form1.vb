@@ -68,7 +68,6 @@ Public Class Form1
             Dim leftMargin As Single = 20
             e.Graphics.DrawString(e.Value.ToString(), New Font(FontFamily.GenericSerif, 12), Brushes.White, New PointF(e.CellBounds.Left + leftMargin, mid))
             e.Handled = True
-
             Return
         End If
 
