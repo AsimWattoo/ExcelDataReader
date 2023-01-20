@@ -7,12 +7,12 @@ Imports System.Windows.Forms.LinkLabel
 Public Class Form1
     Dim dates As List(Of String) = New List(Of String)()
     Private lines As List(Of String) = New List(Of String)()
-    Private parsedData As Dictionary(Of String, List(Of List(Of String))) = New Dictionary(Of String, List(Of List(Of String)))()
+    Private parsedData As Dictionary(Of String, Dictionary(Of Integer, List(Of List(Of String)))) = New Dictionary(Of String, Dictionary(Of Integer, List(Of List(Of String))))
     Private parsedLines As List(Of List(Of String)) = New List(Of List(Of String))
     Private patternObject As Form2 = New Form2
     Private ColumnData As detailsData1 = New detailsData1
     Private patternLines As List(Of List(Of String)) = New List(Of List(Of String))()
-    Private parsedLineNew As List(Of List(Of String)) = New List(Of List(Of String))
+    Private parsedLineNew As Dictionary(Of String, List(Of String)) = New Dictionary(Of String, List(Of String))
     Private currentlyOpennedFile As String = Nothing
 
 
@@ -41,7 +41,6 @@ Public Class Form1
             DataGridView1.Rows.Item(i).Height = 100
         Next
     End Sub
-
 
     Private Sub CellPaint(sender As Object, e As DataGridViewCellPaintingEventArgs)
 
@@ -73,28 +72,56 @@ Public Class Form1
         End If
 
         Dim pen As Pen = New Pen(Brushes.Black, 0.5)
-        Dim halfWidth As Integer = e.CellBounds.Width
-        Dim halfHeight As Integer = e.CellBounds.Height / 3
 
         Dim item As Object = e.Value
         If TypeOf item Is String Then
             Dim str As String = CType(item, String)
-            Dim items As String() = str.Split("//")
+            Dim records As String() = str.Split("\n")
 
-            If Not (items.Length.Equals(3)) Then
+            If records.Length <= 1 Then
                 Return
             End If
+
+            Dim heightForEachRecord As Integer = CType(Math.Ceiling((e.CellBounds.Height * 1.0) / (records.Length - 1)), Integer)
+            Dim startPoint As Integer = 0
+            Dim halfHeight As Integer = heightForEachRecord / 2
             e.Graphics.FillRectangle(Brushes.White, New Rectangle(e.CellBounds.Left, e.CellBounds.Top, e.CellBounds.Width, e.CellBounds.Height))
-            e.Graphics.DrawRectangle(pen, New Rectangle(e.CellBounds.Left, e.CellBounds.Top, e.CellBounds.Width, halfHeight))
-            e.Graphics.DrawRectangle(pen, New Rectangle(e.CellBounds.Left, e.CellBounds.Top + halfHeight, e.CellBounds.Width, halfHeight))
-            e.Graphics.DrawRectangle(pen, New Rectangle(e.CellBounds.Left, e.CellBounds.Top + 2 * halfHeight, e.CellBounds.Width, halfHeight))
-            e.Graphics.DrawString(items(0), New Font(FontFamily.GenericSerif, 12), Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + 10))
-            e.Graphics.DrawString(items(1), New Font(FontFamily.GenericSerif, 12), Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + halfHeight + 10))
-            e.Graphics.DrawString(items(2), New Font(FontFamily.GenericSerif, 12), Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + 2 * halfHeight + 10))
-            e.Handled = True
+            For Each record As String In records
+
+                If record = "" Then
+                    Continue For
+                End If
+
+                Dim items As String() = record.Split("//")
+                If Not (items.Length.Equals(3)) Then
+                    Return
+                End If
+                e.Graphics.DrawRectangle(pen, New Rectangle(e.CellBounds.Left, e.CellBounds.Top + startPoint, e.CellBounds.Width, halfHeight))
+                e.Graphics.DrawRectangle(pen, New Rectangle(e.CellBounds.Left, e.CellBounds.Top + startPoint + halfHeight, e.CellBounds.Width, halfHeight))
+                e.Graphics.DrawString(items(0), New Font(FontFamily.GenericSerif, 12), Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + 5 + startPoint))
+                Dim startTime As DateTime = DateTime.Parse(items(1))
+                Dim duration As DateTime = DateTime.Parse(items(2))
+                Dim endTime As DateTime = startTime.AddMinutes(duration.Minute)
+                If duration.Minute = 0 Then
+                    endTime = endTime.AddHours(duration.Hour)
+                End If
+                e.Graphics.DrawString($"{items(1)} ~ {endTime.Hour}:{ConvertNumber(endTime.Minute)}:{ConvertNumber(endTime.Second)} ({items(2)})", New Font(FontFamily.GenericSerif, 12), Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + halfHeight + 5 + startPoint))
+                e.Handled = True
+                startPoint += heightForEachRecord
+            Next
 
         End If
     End Sub
+
+    Private Function ConvertNumber(number As Integer) As String
+        If number = 0 Then
+            Return "00"
+        ElseIf number < 10 Then
+            Return $"0{number}"
+        Else
+            Return number.ToString()
+        End If
+    End Function
 
     Private Sub DateTimePicker1_ValueChanged(sender As Object, e As EventArgs) Handles DateTimePicker1.ValueChanged
         If DateTimePicker1.Created Then
@@ -192,56 +219,69 @@ Public Class Form1
             table.Columns.Add(d)
         Next
 
-        Dim previousHour = 0
-        For Each line As List(Of String) In parsedLines
-            Dim time As DateTime = DateTime.Parse(line(1))
-            If Not (previousHour = time.Hour) Then
-                parsedLineNew.Add(line)
-                previousHour = time.Hour
-            End If
-        Next
+        'Dim previousHour = 0
+        'For Each line As List(Of String) In parsedLines
+        '    Dim time As DateTime = DateTime.Parse(line(1))
+        '    If Not (previousHour = time.Hour) Then
+        '        parsedLineNew.Add(line)
+        '        previousHour = time.Hour
+        '    End If
+        'Next
 
         For i As Integer = 0 To dates.Count - 1
-            parsedData.Add(dates(i), New List(Of List(Of String)))
+            parsedData.Add(dates(i), New Dictionary(Of Integer, List(Of List(Of String))))
         Next
 
-        For Each line As List(Of String) In parsedLineNew
+        Dim allTimeEnteries As List(Of Integer) = New List(Of Integer)()
+        Dim previousTime As String = ""
+        For Each line As List(Of String) In parsedLines
             Dim currentDate As String = line(0)
             If parsedData.ContainsKey(currentDate) Then
-                parsedData(currentDate).Add(line)
-            End If
-        Next
-        'Adding rows
-        For Each line As List(Of String) In parsedLineNew
-            items = New List(Of Object)()
-            Dim currentTime As String = line(1)
-
-            If currentTime.Equals("Start Time") Then
-                Continue For
-            End If
-
-            items.Add(currentTime)
-            If Not items.Contains(currentTime) Then
-                items.Add(currentTime)
-            End If
-            For i As Integer = 2 To dates.Count - 1
-                Dim item As List(Of String) = parsedData(dates(i)).Where(Function(x) As Boolean
-                                                                             Return x(1).Equals(currentTime)
-                                                                         End Function).FirstOrDefault()
-                If item Is Nothing Then
-                    Continue For
+                Dim currentTime = DateTime.Parse(line(1))
+                If Not parsedData(currentDate).ContainsKey(currentTime.Hour) Then
+                    parsedData(currentDate).Add(currentTime.Hour, New List(Of List(Of String)))
                 End If
 
-                items.Add(item(3) + "//" + item(1) + "//" + item(2))
+                If Not allTimeEnteries.Contains(currentTime.Hour) Then
+                    allTimeEnteries.Add(currentTime.Hour)
+                End If
 
+                If line(1) = previousTime Then
+                    Continue For
+                End If
+                previousTime = line(1)
+                'Adding line to the current time
+                parsedData(currentDate)(currentTime.Hour).Add(line)
+            End If
+        Next
+
+        'Adding rows
+        For Each hour As Integer In allTimeEnteries
+            Dim dataItems As List(Of Object) = New List(Of Object)()
+
+            For Each d As String In dates
+                If parsedData(d).ContainsKey(hour) Then
+                    Dim str As String = ""
+                    For Each line As List(Of String) In parsedData(d)(hour)
+                        str += line(3) + "//" + line(1) + "//" + line(2) + "\n"
+                    Next
+                    str = str.Trim("\n")
+                    dataItems.Add(str)
+                Else
+                    If d = "" Then
+                        dataItems.Add($"{hour}:00:00")
+                    Else
+                        dataItems.Add("")
+                    End If
+                End If
             Next
-            table.Rows.Add(items.ToArray())
+            table.Rows.Add(dataItems.ToArray())
         Next
 
         DataGridView1.DataSource = table
 
-        For i As Integer = 0 To parsedLineNew.Count - 1
-            DataGridView1.Rows.Item(i).Height = 100
+        For i As Integer = 0 To DataGridView1.RowCount - 1
+            DataGridView1.Rows.Item(i).Height = 200
         Next
 
         For i As Integer = 1 To DataGridView1.Columns.Count - 1
