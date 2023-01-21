@@ -1,20 +1,16 @@
 ﻿Imports System.IO
-Imports System.Net.Security
-Imports System.Security.Cryptography
 Imports System.Text
-Imports System.Windows.Forms.LinkLabel
 
 Public Class Form1
     Dim dates As List(Of String) = New List(Of String)()
     Private lines As List(Of String) = New List(Of String)()
     Private parsedData As Dictionary(Of String, Dictionary(Of Integer, List(Of List(Of String)))) = New Dictionary(Of String, Dictionary(Of Integer, List(Of List(Of String))))
     Private parsedLines As List(Of List(Of String)) = New List(Of List(Of String))
-    Private patternObject As Form2 = New Form2
+    Private patternObject As Form2 = Nothing
     Private ColumnData As detailsData1 = New detailsData1
-    Private patternLines As List(Of List(Of String)) = New List(Of List(Of String))()
     Private parsedLineNew As Dictionary(Of String, List(Of String)) = New Dictionary(Of String, List(Of String))
     Private currentlyOpennedFile As String = Nothing
-
+    Private currentPattern As String = Nothing
 
     Private Sub open_Click(sender As Object, e As EventArgs) Handles open.Click
         Using ofd As OpenFileDialog = New OpenFileDialog() With {.Filter = "CSV files|*.csv"}
@@ -131,39 +127,44 @@ Public Class Form1
     End Sub
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-        Form2.Show()
-        If Form2.DialogResult = DialogResult.OK Then
-            loadData(currentlyOpennedFile, DateTime.Now)
+        patternObject = New Form2(currentPattern)
+        If patternObject.ShowDialog() = DialogResult.OK Then
+            currentPattern = patternObject.pattern
         End If
     End Sub
 
     Public Sub loadData(fileName As String, startDate As Date)
 
+        If String.IsNullOrEmpty(fileName) Then
+            Return
+        End If
+
         startDate = New Date(startDate.Year, startDate.Month, startDate.Day)
 
-        If patternObject.pattern = Nothing Then
+        If currentPattern = Nothing Then
             ColumnData.DateColumn = 2
             ColumnData.StartTimeColumn = 3
             ColumnData.TotalTimeColumn = 4
             ColumnData.TitleColumn = 6
             ColumnData.DetailsColumn = 7
-        ElseIf patternObject.pattern.Equals("Pattern A") Then
+        ElseIf currentPattern.Equals("Pattern A") Then
             ColumnData.DateColumn = 2
             ColumnData.StartTimeColumn = 3
             ColumnData.TotalTimeColumn = 4
             ColumnData.TitleColumn = 6
             ColumnData.DetailsColumn = 7
-        ElseIf patternObject.pattern.Equals("Pattern B") Then
+        ElseIf currentPattern.Equals("Pattern B") Then
             ColumnData.DateColumn = 3
             ColumnData.StartTimeColumn = 4
             ColumnData.TotalTimeColumn = 5
             ColumnData.TitleColumn = 9
             ColumnData.DetailsColumn = 10
-        ElseIf patternObject.pattern.Equals("Pattern C") Then
+        ElseIf currentPattern.Equals("Pattern C") Then
             ColumnData.DateColumn = 1
             ColumnData.StartTimeColumn = 2
             ColumnData.TotalTimeColumn = 3
             ColumnData.TitleColumn = 8
+            ColumnData.DetailsColumn = 9
         End If
 
 
@@ -185,23 +186,26 @@ Public Class Form1
         For i As Integer = 0 To lines.Count - 1
             data = lines(i).Split(",")
             Dim newData As List(Of String) = New List(Of String)()
-            Dim currentDate As String = data(2)
+            Dim currentDate As String = data(ColumnData.DateColumn)
             If currentDate.Equals("Program Date") Then
                 Continue For
             End If
+            Dim d As Date = Date.Parse(currentDate)
+            currentDate = d.ToString("dd/MM/yyyy")
+
             For val As Integer = 0 To data.Count - 1
                 If val = ColumnData.DateColumn Or val = ColumnData.StartTimeColumn Or val = ColumnData.TotalTimeColumn Or val = ColumnData.TitleColumn Or val = ColumnData.DetailsColumn Then
                     If val = ColumnData.StartTimeColumn Then
                         newData.Insert(1, data(val))
                     ElseIf val = ColumnData.DateColumn Then
-                        newData.Insert(0, data(val))
+                        newData.Insert(0, currentDate)
                     Else
                         newData.Add(data(val))
                     End If
                 End If
             Next
+
             parsedLines.Add(newData)
-            Dim d As Date = Date.Parse(currentDate)
             If Not initialDates.Contains(d) Then
                 initialDates.Add(d)
             End If
@@ -209,9 +213,8 @@ Public Class Form1
 
         'Adding dates to the data table
         For Each d As Date In initialDates
-
             If d >= startDate Then
-                dates.Add(d.ToString("yyyy/MM/dd"))
+                dates.Add(d.ToString("dd/MM/yyyy"))
             End If
         Next
 
