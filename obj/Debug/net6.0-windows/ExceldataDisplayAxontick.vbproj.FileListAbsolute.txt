@@ -65,3 +65,4 @@ C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\obj\Debug\net6.0-windows
 C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.pdb
 C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.genruntimeconfig.cache
 C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\obj\Debug\net6.0-windows\ref\ExceldataDisplayAxontick.dll
+C:\Users\MUHAMMAD YAAR\Documents\ExcelDataReader-master\obj\Debug\net6.0-windows\ExceldataDisplayAxontick.Resources.resources
