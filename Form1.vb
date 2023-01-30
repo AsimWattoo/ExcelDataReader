@@ -1,4 +1,5 @@
 ﻿Imports System.IO
+Imports System.Net.Security
 Imports System.Text
 
 Public Class Form1
@@ -10,17 +11,7 @@ Public Class Form1
     Private ColumnData As detailsData1 = New detailsData1
     Private parsedLineNew As Dictionary(Of String, List(Of String)) = New Dictionary(Of String, List(Of String))
     Private currentlyOpennedFile As String = Nothing
-    Private currentPattern As String = Nothing
-
-    Private Sub open_Click(sender As Object, e As EventArgs) Handles open.Click
-        Using ofd As OpenFileDialog = New OpenFileDialog() With {.Filter = "CSV files|*.csv"}
-            If ofd.ShowDialog() = DialogResult.OK Then
-                currentlyOpennedFile = ofd.FileName
-                loadData(ofd.FileName, DateTime.Now)
-            End If
-        End Using
-
-    End Sub
+    Private currentPattern As String = "Pattern A"
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         AddHandler DataGridView1.CellPainting, AddressOf CellPaint
@@ -34,12 +25,13 @@ Public Class Form1
 
     Private Sub ColumnSorted(sender As Object, e As EventArgs)
         For i As Integer = 0 To DataGridView1.Rows.Count - 1
-            DataGridView1.Rows.Item(i).Height = 100
+            DataGridView1.Rows.Item(i).Height = 200
         Next
     End Sub
 
     Private Sub CellPaint(sender As Object, e As DataGridViewCellPaintingEventArgs)
 
+        Dim _font As Font = New Font(FontFamily.GenericSerif, 12)
         If e.RowIndex.Equals(-1) Then
 
             If e.ColumnIndex = 0 Then
@@ -48,6 +40,8 @@ Public Class Form1
                 Dim margin As Single = 15
                 Dim points As Point() = {New Point(e.CellBounds.Left + margin, e.CellBounds.Top + margin), New Point(e.CellBounds.Right - margin, e.CellBounds.Bottom - margin)}
                 e.Graphics.DrawPolygon(polygonPen, points)
+                e.Graphics.DrawString("Date", _font, Brushes.White, New PointF(e.CellBounds.Left + margin + 35, e.CellBounds.Top + 8))
+                e.Graphics.DrawString("Time", _font, Brushes.White, New PointF(e.CellBounds.Left + margin + 10, e.CellBounds.Top + margin + 20))
                 e.Handled = True
                 Return
             Else
@@ -56,6 +50,7 @@ Public Class Form1
 
         End If
 
+        DataGridView1.Rows.Item(e.RowIndex).Height = 200
         If e.ColumnIndex < 1 Then
             Dim rect As Rectangle = New Rectangle(e.CellBounds.Left, e.CellBounds.Top, e.CellBounds.Width, e.CellBounds.Height)
             e.Graphics.FillRectangle(New SolidBrush(Color.FromArgb(68, 115, 197)), rect)
@@ -80,7 +75,6 @@ Public Class Form1
 
             Dim heightForEachRecord As Integer = CType(Math.Ceiling((e.CellBounds.Height * 1.0) / (records.Length - 1)), Integer)
             Dim startPoint As Integer = 0
-            Dim halfHeight As Integer = heightForEachRecord / 2
             e.Graphics.FillRectangle(Brushes.White, New Rectangle(e.CellBounds.Left, e.CellBounds.Top, e.CellBounds.Width, e.CellBounds.Height))
             For Each record As String In records
 
@@ -92,16 +86,15 @@ Public Class Form1
                 If Not (items.Length.Equals(3)) Then
                     Return
                 End If
-                e.Graphics.DrawRectangle(pen, New Rectangle(e.CellBounds.Left, e.CellBounds.Top + startPoint, e.CellBounds.Width, halfHeight))
-                e.Graphics.DrawRectangle(pen, New Rectangle(e.CellBounds.Left, e.CellBounds.Top + startPoint + halfHeight, e.CellBounds.Width, halfHeight))
-                e.Graphics.DrawString(items(0), New Font(FontFamily.GenericSerif, 12), Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + 5 + startPoint))
+                e.Graphics.DrawRectangle(pen, New Rectangle(e.CellBounds.Left, e.CellBounds.Top + startPoint, e.CellBounds.Width, heightForEachRecord))
+                e.Graphics.DrawString(items(0), _font, Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + 5 + startPoint))
                 Dim startTime As DateTime = DateTime.Parse(items(1))
                 Dim duration As DateTime = DateTime.Parse(items(2))
                 Dim endTime As DateTime = startTime.AddMinutes(duration.Minute)
                 If duration.Minute = 0 Then
                     endTime = endTime.AddHours(duration.Hour)
                 End If
-                e.Graphics.DrawString($"{items(1)} ~ {endTime.Hour}:{ConvertNumber(endTime.Minute)}:{ConvertNumber(endTime.Second)} ({items(2)})", New Font(FontFamily.GenericSerif, 12), Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + halfHeight + 5 + startPoint))
+                e.Graphics.DrawString($"{items(1)} ~ {endTime.Hour}:{ConvertNumber(endTime.Minute)}:{ConvertNumber(endTime.Second)} ({items(2)})", _font, Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + 30 + startPoint))
                 e.Handled = True
                 startPoint += heightForEachRecord
             Next
@@ -123,13 +116,13 @@ Public Class Form1
         If DateTimePicker1.Created Then
             loadData(currentlyOpennedFile, DateTimePicker1.Value)
         End If
-
     End Sub
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         patternObject = New Form2(currentPattern)
         If patternObject.ShowDialog() = DialogResult.OK Then
             currentPattern = patternObject.pattern
+            currentlyOpennedFile = patternObject.currentlyOpennedFile
         End If
     End Sub
 
@@ -173,7 +166,6 @@ Public Class Form1
         parsedLines.Clear()
         parsedLineNew.Clear()
         lines.Clear()
-        dates.Clear()
         Dim initialDates As List(Of Date) = New List(Of Date)
         Dim table As DataTable = New DataTable()
         Dim items As List(Of Object) = New List(Of Object)()
@@ -183,11 +175,15 @@ Public Class Form1
         dates.Add("")
         Dim data As String()
 
+        Dim checkDate As Date = DateTime.Now.AddDays(-90)
         For i As Integer = 0 To lines.Count - 1
             data = lines(i).Split(",")
             Dim newData As List(Of String) = New List(Of String)()
             Dim currentDate As String = data(ColumnData.DateColumn)
             If currentDate.Equals("Program Date") Then
+                Continue For
+            End If
+            If currentDate < checkDate Then
                 Continue For
             End If
             Dim d As Date = Date.Parse(currentDate)
@@ -272,7 +268,7 @@ Public Class Form1
                     dataItems.Add(str)
                 Else
                     If d = "" Then
-                        dataItems.Add($"{hour}:00:00")
+                        dataItems.Add($"{ConvertNumber(hour)}:00")
                     Else
                         dataItems.Add("")
                     End If
@@ -280,8 +276,10 @@ Public Class Form1
             Next
             table.Rows.Add(dataItems.ToArray())
         Next
-
-        DataGridView1.DataSource = table
+        DataGridView1.Columns.Clear()
+        If Not table.Rows.Count = 0 Then
+            DataGridView1.DataSource = table
+        End If
 
         For i As Integer = 0 To DataGridView1.RowCount - 1
             DataGridView1.Rows.Item(i).Height = 200

@@ -1,5 +1,7 @@
 ﻿Public Class Form2
     Public Property pattern As String
+    Public currentlyOpennedFile As String = Nothing
+
     Private Sub ComboBox1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles PatternComboBox.SelectedIndexChanged
         pattern = PatternComboBox.Text
     End Sub
@@ -29,4 +31,12 @@
 
     End Sub
 
+    Private Sub Openbtn_Click(sender As Object, e As EventArgs) Handles Openbtn.Click
+        Using ofd As OpenFileDialog = New OpenFileDialog() With {.Filter = "CSV files|*.csv"}
+            If ofd.ShowDialog() = DialogResult.OK Then
+                currentlyOpennedFile = ofd.FileName
+                Form1.loadData(ofd.FileName, DateTime.Now)
+            End If
+        End Using
+    End Sub
 End Class

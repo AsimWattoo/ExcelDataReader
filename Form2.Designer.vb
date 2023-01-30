@@ -25,6 +25,7 @@ Partial Class Form2
         Me.PatternComboBox = New System.Windows.Forms.ComboBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.Button1 = New System.Windows.Forms.Button()
+        Me.Openbtn = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'PatternComboBox
@@ -48,18 +49,28 @@ Partial Class Form2
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(147, 73)
+        Me.Button1.Location = New System.Drawing.Point(147, 87)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(75, 23)
         Me.Button1.TabIndex = 14
         Me.Button1.Text = "Done"
         Me.Button1.UseVisualStyleBackColor = True
         '
+        'Openbtn
+        '
+        Me.Openbtn.Location = New System.Drawing.Point(12, 87)
+        Me.Openbtn.Name = "Openbtn"
+        Me.Openbtn.Size = New System.Drawing.Size(75, 23)
+        Me.Openbtn.TabIndex = 15
+        Me.Openbtn.Text = "Open File"
+        Me.Openbtn.UseVisualStyleBackColor = True
+        '
         'Form2
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 15.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(234, 108)
+        Me.ClientSize = New System.Drawing.Size(234, 122)
+        Me.Controls.Add(Me.Openbtn)
         Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.PatternComboBox)
@@ -73,4 +84,5 @@ Partial Class Form2
     Friend WithEvents PatternComboBox As ComboBox
     Friend WithEvents Label1 As Label
     Friend WithEvents Button1 As Button
+    Friend WithEvents Openbtn As Button
 End Class
