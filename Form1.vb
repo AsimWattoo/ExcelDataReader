@@ -1,6 +1,7 @@
 ﻿Imports System.IO
 Imports System.Net.Security
 Imports System.Text
+Imports System.Threading
 
 Public Class Form1
     Dim dates As List(Of String) = New List(Of String)()
@@ -12,6 +13,8 @@ Public Class Form1
     Private parsedLineNew As Dictionary(Of String, List(Of String)) = New Dictionary(Of String, List(Of String))
     Private currentlyOpennedFile As String = Nothing
     Private currentPattern As String = "Pattern A"
+    Dim folderWatcher As FileSystemWatcher
+    Dim watcherThread As Thread
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         AddHandler DataGridView1.CellPainting, AddressOf CellPaint
@@ -123,7 +126,53 @@ Public Class Form1
         If patternObject.ShowDialog() = DialogResult.OK Then
             currentPattern = patternObject.pattern
             currentlyOpennedFile = patternObject.currentlyOpennedFile
+            If Not String.IsNullOrEmpty(currentlyOpennedFile) Then
+                Dim fileInfo As FileInfo = New FileInfo(currentlyOpennedFile)
+                If fileInfo.Exists Then
+
+                    If watcherThread Is Nothing Then
+                        watcherThread = New Thread(New ParameterizedThreadStart(AddressOf StartFolder_Watch))
+                        watcherThread.Start()
+                    ElseIf watcherThread.IsAlive Then
+                        watcherThread.Interrupt()
+                        watcherThread = New Thread(New ParameterizedThreadStart(AddressOf StartFolder_Watch))
+                        watcherThread.Start()
+                    End If
+
+                End If
+            End If
         End If
+    End Sub
+
+    'Fires when the files in the folder changes
+    Public Sub OnFolderChanged(ByVal source As Object, ByVal e As FileSystemEventArgs)
+        currentlyOpennedFile = e.FullPath
+        Me.Invoke(AddressOf StartDataLoad)
+    End Sub
+
+    Public Sub StartDataLoad()
+        loadData(currentlyOpennedFile, DateTimePicker1.Value)
+    End Sub
+
+    'Fires when the folder is renamed
+    Public Sub OnFolderRenamed(ByVal source As Object, ByVal e As RenamedEventArgs)
+        currentlyOpennedFile = e.FullPath
+        Me.Invoke(AddressOf StartDataLoad)
+    End Sub
+
+    Public Sub StartFolder_Watch(data As Object)
+        Dim fileInfo As FileInfo = New FileInfo(currentlyOpennedFile)
+        folderWatcher = New FileSystemWatcher(fileInfo.DirectoryName)
+
+        AddHandler folderWatcher.Changed, AddressOf OnFolderChanged
+        AddHandler folderWatcher.Renamed, AddressOf OnFolderRenamed
+
+        With folderWatcher
+            .EnableRaisingEvents = True
+            .WaitForChanged(WatcherChangeTypes.Renamed Or WatcherChangeTypes.Changed)
+            .Filter = "*.csv"
+            .NotifyFilter = (NotifyFilters.FileName Or NotifyFilters.DirectoryName)
+        End With
     End Sub
 
     Public Sub loadData(fileName As String, startDate As Date)
@@ -289,6 +338,15 @@ Public Class Form1
             DataGridView1.Columns(i).Width = 250
         Next
 
+    End Sub
+
+    Private Sub Form1_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
+        If Not watcherThread Is Nothing Then
+            If watcherThread.IsAlive Then
+                watcherThread.Interrupt()
+                watcherThread = Nothing
+            End If
+        End If
     End Sub
 
 End Class
