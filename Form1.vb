@@ -1,7 +1,9 @@
 ﻿Imports System.IO
 Imports System.Net.Security
+Imports System.Runtime.Intrinsics.X86
 Imports System.Text
 Imports System.Threading
+Imports Microsoft.VisualBasic.Devices
 
 Public Class Form1
     Dim dates As List(Of String) = New List(Of String)()
@@ -15,6 +17,7 @@ Public Class Form1
     Private currentPattern As String = "Pattern A"
     Dim folderWatcher As FileSystemWatcher
     Dim watcherThread As Thread
+    Dim rowHeight As Integer = 100
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         AddHandler DataGridView1.CellPainting, AddressOf CellPaint
@@ -52,16 +55,25 @@ Public Class Form1
             End If
 
         End If
-
-        DataGridView1.Rows.Item(e.RowIndex).Height = 200
+        DataGridView1.Rows.Item(e.RowIndex).Height = rowHeight
         If e.ColumnIndex < 1 Then
+            Dim value As String = e.Value.ToString()
             Dim rect As Rectangle = New Rectangle(e.CellBounds.Left, e.CellBounds.Top, e.CellBounds.Width, e.CellBounds.Height)
-            e.Graphics.FillRectangle(New SolidBrush(Color.FromArgb(68, 115, 197)), rect)
-            e.Graphics.DrawRectangle(New Pen(Color.White), rect)
-            Dim mid As Single = e.CellBounds.Height / 2 + e.CellBounds.Top - 10
-            Dim leftMargin As Single = 20
-            e.Graphics.DrawString(e.Value.ToString(), New Font(FontFamily.GenericSerif, 12), Brushes.White, New PointF(e.CellBounds.Left + leftMargin, mid))
-            e.Handled = True
+
+            If String.IsNullOrEmpty(value) Then
+                e.Graphics.FillRectangle(New SolidBrush(Color.FromArgb(68, 115, 197)), rect)
+                e.Graphics.DrawLine(New Pen(Color.White), New Point(e.CellBounds.Left, e.CellBounds.Top), New Point(e.CellBounds.Left, e.CellBounds.Bottom))
+                e.Graphics.DrawLine(New Pen(Color.White), New Point(e.CellBounds.Right, e.CellBounds.Top), New Point(e.CellBounds.Right, e.CellBounds.Bottom))
+                e.Handled = True
+            Else
+                e.Graphics.FillRectangle(New SolidBrush(Color.FromArgb(68, 115, 197)), rect)
+                e.Graphics.DrawRectangle(New Pen(Color.White), rect)
+                Dim mid As Single = e.CellBounds.Height / 2 + e.CellBounds.Top - 10
+                Dim leftMargin As Single = 20
+                e.Graphics.DrawString(value, New Font(FontFamily.GenericSerif, 12), Brushes.White, New PointF(e.CellBounds.Left + leftMargin, mid))
+                e.Handled = True
+            End If
+
             Return
         End If
 
@@ -70,38 +82,22 @@ Public Class Form1
         Dim item As Object = e.Value
         If TypeOf item Is String Then
             Dim str As String = CType(item, String)
-            Dim records As String() = str.Split("\n")
+            e.Graphics.FillRectangle(Brushes.White, New Rectangle(e.CellBounds.Left, e.CellBounds.Top, e.CellBounds.Width, e.CellBounds.Height))
 
-            If records.Length <= 1 Then
+            Dim items As String() = str.Split("//")
+            If Not (items.Length.Equals(3)) Then
                 Return
             End If
-
-            Dim heightForEachRecord As Integer = CType(Math.Ceiling((e.CellBounds.Height * 1.0) / (records.Length - 1)), Integer)
-            Dim startPoint As Integer = 0
-            e.Graphics.FillRectangle(Brushes.White, New Rectangle(e.CellBounds.Left, e.CellBounds.Top, e.CellBounds.Width, e.CellBounds.Height))
-            For Each record As String In records
-
-                If record = "" Then
-                    Continue For
-                End If
-
-                Dim items As String() = record.Split("//")
-                If Not (items.Length.Equals(3)) Then
-                    Return
-                End If
-                e.Graphics.DrawRectangle(pen, New Rectangle(e.CellBounds.Left, e.CellBounds.Top + startPoint, e.CellBounds.Width, heightForEachRecord))
-                e.Graphics.DrawString(items(0), _font, Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + 5 + startPoint))
-                Dim startTime As DateTime = DateTime.Parse(items(1))
-                Dim duration As DateTime = DateTime.Parse(items(2))
-                Dim endTime As DateTime = startTime.AddMinutes(duration.Minute)
-                If duration.Minute = 0 Then
-                    endTime = endTime.AddHours(duration.Hour)
-                End If
-                e.Graphics.DrawString($"{items(1)} ~ {endTime.Hour}:{ConvertNumber(endTime.Minute)}:{ConvertNumber(endTime.Second)} ({items(2)})", _font, Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + 30 + startPoint))
-                e.Handled = True
-                startPoint += heightForEachRecord
-            Next
-
+            e.Graphics.DrawRectangle(pen, New Rectangle(e.CellBounds.Left, e.CellBounds.Top, e.CellBounds.Width, rowHeight))
+            e.Graphics.DrawString(items(0), _font, Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + 5))
+            Dim startTime As DateTime = DateTime.Parse(items(1))
+            Dim duration As DateTime = DateTime.Parse(items(2))
+            Dim endTime As DateTime = startTime.AddMinutes(duration.Minute)
+            If duration.Minute = 0 Then
+                endTime = endTime.AddHours(duration.Hour)
+            End If
+            e.Graphics.DrawString($"{items(1)} ~ {endTime.Hour}:{ConvertNumber(endTime.Minute)}:{ConvertNumber(endTime.Second)} ({items(2)})", _font, Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + 30))
+            e.Handled = True
         End If
     End Sub
 
@@ -167,12 +163,16 @@ Public Class Form1
         AddHandler folderWatcher.Changed, AddressOf OnFolderChanged
         AddHandler folderWatcher.Renamed, AddressOf OnFolderRenamed
 
-        With folderWatcher
-            .EnableRaisingEvents = True
-            .WaitForChanged(WatcherChangeTypes.Renamed Or WatcherChangeTypes.Changed)
-            .Filter = "*.csv"
-            .NotifyFilter = (NotifyFilters.FileName Or NotifyFilters.DirectoryName)
-        End With
+        Try
+            With folderWatcher
+                .EnableRaisingEvents = True
+                .WaitForChanged(WatcherChangeTypes.Renamed Or WatcherChangeTypes.Changed)
+                .Filter = "*.csv"
+                .NotifyFilter = (NotifyFilters.FileName Or NotifyFilters.DirectoryName)
+            End With
+        Catch ex As Exception
+
+        End Try
     End Sub
 
     Public Sub loadData(fileName As String, startDate As Date)
@@ -286,6 +286,7 @@ Public Class Form1
             Dim currentDate As String = line(0)
             If parsedData.ContainsKey(currentDate) Then
                 Dim currentTime = DateTime.Parse(line(1))
+
                 If Not parsedData(currentDate).ContainsKey(currentTime.Hour) Then
                     parsedData(currentDate).Add(currentTime.Hour, New List(Of List(Of String)))
                 End If
@@ -303,27 +304,59 @@ Public Class Form1
             End If
         Next
 
+        Dim indexData As Dictionary(Of String, Dictionary(Of Integer, Integer)) = New Dictionary(Of String, Dictionary(Of Integer, Integer))()
+
         'Adding rows
         For Each hour As Integer In allTimeEnteries
-            Dim dataItems As List(Of Object) = New List(Of Object)()
+
+            Dim maxRecords As Integer = 0
 
             For Each d As String In dates
-                If parsedData(d).ContainsKey(hour) Then
-                    Dim str As String = ""
-                    For Each line As List(Of String) In parsedData(d)(hour)
-                        str += line(3) + "//" + line(1) + "//" + line(2) + "\n"
-                    Next
-                    str = str.Trim("\n")
-                    dataItems.Add(str)
-                Else
-                    If d = "" Then
-                        dataItems.Add($"{ConvertNumber(hour)}:00")
-                    Else
-                        dataItems.Add("")
+                If parsedData.ContainsKey(d) Then
+                    If parsedData(d).ContainsKey(hour) Then
+                        If parsedData(d)(hour).Count > maxRecords Then
+                            maxRecords = parsedData(d)(hour).Count
+                        End If
                     End If
                 End If
             Next
-            table.Rows.Add(dataItems.ToArray())
+
+            For i As Integer = 0 To maxRecords - 1
+                Dim dataItems As List(Of Object) = New List(Of Object)()
+
+                For Each d As String In dates
+                    'Finding Maximum number of records
+
+                    If parsedData(d).ContainsKey(hour) Then
+
+                        If Not indexData.ContainsKey(d) Then
+                            indexData.Add(d, New Dictionary(Of Integer, Integer)())
+                        End If
+
+                        If Not indexData(d).ContainsKey(hour) Then
+                            indexData(d).Add(hour, 0)
+                        End If
+
+                        If indexData(d)(hour) < parsedData(d)(hour).Count Then
+                            Dim l As List(Of String) = parsedData(d)(hour)(indexData(d)(hour))
+                            dataItems.Add($"{l(3)}//{l(1)}//{l(2)}")
+                            indexData(d)(hour) += 1
+                        End If
+
+                    Else
+                        If d = "" Then
+                            If i = 0 Then
+                                dataItems.Add($"{ConvertNumber(hour)}:00")
+                            Else
+                                dataItems.Add("")
+                            End If
+                        Else
+                            dataItems.Add("")
+                        End If
+                    End If
+                Next
+                table.Rows.Add(dataItems.ToArray())
+            Next
         Next
         DataGridView1.Columns.Clear()
         If Not table.Rows.Count = 0 Then
@@ -331,7 +364,7 @@ Public Class Form1
         End If
 
         For i As Integer = 0 To DataGridView1.RowCount - 1
-            DataGridView1.Rows.Item(i).Height = 200
+            DataGridView1.Rows.Item(i).Height = rowHeight
         Next
 
         For i As Integer = 1 To DataGridView1.Columns.Count - 1
@@ -347,6 +380,43 @@ Public Class Form1
                 watcherThread = Nothing
             End If
         End If
+    End Sub
+
+    'Fires when the cell is clicked
+    Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+        Dim rowHeader As String = DataGridView1.Rows.Item(e.RowIndex).Cells.Item(0).Value
+        Dim columnHeader As String = DataGridView1.Columns.Item(e.ColumnIndex).HeaderText
+        Dim occurenceDate As DateTime = DateTime.Parse(columnHeader)
+        Dim headerIndex As Integer = e.RowIndex - 1
+        If rowHeader = "" Then
+            While rowHeader = ""
+                rowHeader = DataGridView1.Rows.Item(headerIndex).Cells.Item(0).Value
+                headerIndex -= 1
+            End While
+        End If
+
+        Dim occurenceTime As DateTime = DateTime.Parse(rowHeader)
+        Dim items As List(Of List(Of String)) = parsedData(columnHeader)(occurenceTime.Hour)
+        Dim cellText As String = DataGridView1.Rows.Item(e.RowIndex).Cells.Item(e.ColumnIndex).Value
+        Dim parts As String() = cellText.Split("//")
+        Dim index As Integer = -1
+
+        For Each item As List(Of String) In items
+            If item(3) = parts(0) Then
+                index += 1
+                Exit For
+            Else
+                index += 1
+            End If
+        Next
+
+        If index = -1 Then
+            Return
+        End If
+
+        Dim dataForm As DataDisplayForm = New DataDisplayForm()
+        dataForm.SetData(occurenceDate, DateTime.Parse(items(index)(1)), items(index)(3), items(index)(4), items(index)(2), currentlyOpennedFile)
+        dataForm.ShowDialog()
     End Sub
 
 End Class
