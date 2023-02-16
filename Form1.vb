@@ -1,9 +1,7 @@
 ﻿Imports System.IO
-Imports System.Net.Security
-Imports System.Runtime.Intrinsics.X86
 Imports System.Text
 Imports System.Threading
-Imports Microsoft.VisualBasic.Devices
+Imports System.Windows.Forms.AxHost
 
 Public Class Form1
     Dim dates As List(Of String) = New List(Of String)()
@@ -93,9 +91,7 @@ Public Class Form1
             Dim startTime As DateTime = DateTime.Parse(items(1))
             Dim duration As DateTime = DateTime.Parse(items(2))
             Dim endTime As DateTime = startTime.AddMinutes(duration.Minute)
-            If duration.Minute = 0 Then
-                endTime = endTime.AddHours(duration.Hour)
-            End If
+            endTime = endTime.AddHours(duration.Hour)
             e.Graphics.DrawString($"{items(1)} ~ {endTime.Hour}:{ConvertNumber(endTime.Minute)}:{ConvertNumber(endTime.Second)} ({items(2)})", _font, Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + 30))
             e.Handled = True
         End If
@@ -137,6 +133,7 @@ Public Class Form1
 
                 End If
             End If
+            loadData(currentlyOpennedFile, DateTimePicker1.Value)
         End If
     End Sub
 
@@ -175,6 +172,50 @@ Public Class Form1
         End Try
     End Sub
 
+    'Parses date from the given string
+    Public Function ParseDate(_date As String) As DateTime
+        Dim yearStr As String = _date.Substring(0, 4)
+        Dim monthStr As String = _date.Substring(4, 2)
+        Dim dayStr As String = _date.Substring(6, 2)
+        Dim year As Integer = Integer.Parse(yearStr)
+        Dim month As Integer = Integer.Parse(monthStr)
+        Dim day As Integer = Integer.Parse(dayStr)
+        Return New DateTime(year, month, day)
+    End Function
+
+    'Parses time from the string
+    Public Function ParseTime(_time As String) As DateTime
+        If _time.Length = 5 Then
+            Dim hourStr As String = _time.Substring(0, 1)
+            Dim minuteStr As String = _time.Substring(1, 2)
+            Dim secondStr As String = _time.Substring(3, 2)
+            Dim hour As Integer = Integer.Parse(hourStr)
+            Dim minute As Integer = Integer.Parse(minuteStr)
+            Dim second As Integer = Integer.Parse(secondStr)
+            Return DateTime.Parse($"{hour}:{minute}:{second}")
+        Else
+            Dim hourStr As String = _time.Substring(0, 2)
+            Dim minuteStr As String = _time.Substring(2, 2)
+            Dim secondStr As String = _time.Substring(4, 2)
+            Dim hour As Integer = Integer.Parse(hourStr)
+            Dim minute As Integer = Integer.Parse(minuteStr)
+            Dim second As Integer = Integer.Parse(secondStr)
+            Return DateTime.Parse($"{hour}:{minute}:{second}")
+        End If
+    End Function
+
+    'Parses the time from the given seconds
+    Public Function ParseTimeFromSeconds(seconds As Integer) As DateTime
+        Dim minutes As Integer = seconds / 60
+        Dim remainingSeconds As Integer = seconds Mod 60
+        Dim hours As Integer = 0
+        If minutes >= 60 Then
+            hours = minutes / 60
+            minutes = minutes Mod 60
+        End If
+        Return DateTime.Parse($"{hours}:{minutes}:{remainingSeconds}")
+    End Function
+
     Public Sub loadData(fileName As String, startDate As Date)
 
         If String.IsNullOrEmpty(fileName) Then
@@ -196,11 +237,11 @@ Public Class Form1
             ColumnData.TitleColumn = 6
             ColumnData.DetailsColumn = 7
         ElseIf currentPattern.Equals("Pattern B") Then
-            ColumnData.DateColumn = 3
-            ColumnData.StartTimeColumn = 4
-            ColumnData.TotalTimeColumn = 5
-            ColumnData.TitleColumn = 9
-            ColumnData.DetailsColumn = 10
+            ColumnData.DateColumn = 4
+            ColumnData.StartTimeColumn = 5
+            ColumnData.TotalTimeColumn = 6
+            ColumnData.TitleColumn = 7
+            ColumnData.DetailsColumn = 8
         ElseIf currentPattern.Equals("Pattern C") Then
             ColumnData.DateColumn = 1
             ColumnData.StartTimeColumn = 2
@@ -232,16 +273,34 @@ Public Class Form1
             If currentDate.Equals("Program Date") Then
                 Continue For
             End If
-            If currentDate < checkDate Then
+
+            Dim d As Date
+
+            If currentPattern = "Pattern B" Then
+                d = ParseDate(currentDate)
+            Else
+                d = Date.Parse(currentDate)
+            End If
+
+            If d < checkDate Then
                 Continue For
             End If
-            Dim d As Date = Date.Parse(currentDate)
             currentDate = d.ToString("dd/MM/yyyy")
 
             For val As Integer = 0 To data.Count - 1
                 If val = ColumnData.DateColumn Or val = ColumnData.StartTimeColumn Or val = ColumnData.TotalTimeColumn Or val = ColumnData.TitleColumn Or val = ColumnData.DetailsColumn Then
                     If val = ColumnData.StartTimeColumn Then
-                        newData.Insert(1, data(val))
+                        If currentPattern = "Pattern B" Then
+                            newData.Add(ParseTime(data(val)).ToString("HH:mm:ss"))
+                        Else
+                            newData.Add(data(val))
+                        End If
+                    ElseIf val = ColumnData.TotalTimeColumn Then
+                        If currentPattern = "Pattern B" Then
+                            newData.Add(ParseTimeFromSeconds(Integer.Parse(data(val))).ToString("HH:mm:ss"))
+                        Else
+                            newData.Add(data(val))
+                        End If
                     ElseIf val = ColumnData.DateColumn Then
                         newData.Insert(0, currentDate)
                     Else

@@ -194,9 +194,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Work\\Programming\\Visual Studio 2022\\C#\\.Net Framework\\Windows Form\\ExcelDataReader\\ExceldataDisplayAxontick.vbproj",
-      "projectName": "ExceldataDisplayAxontick",
-      "projectPath": "D:\\Work\\Programming\\Visual Studio 2022\\C#\\.Net Framework\\Windows Form\\ExcelDataReader\\ExceldataDisplayAxontick.vbproj",
+      "projectUniqueName": "D:\\Work\\Programming\\Visual Studio 2022\\C#\\.Net Framework\\Windows Form\\ExcelDataReader\\ExceldataDisplay.vbproj",
+      "projectName": "ExceldataDisplay",
+      "projectPath": "D:\\Work\\Programming\\Visual Studio 2022\\C#\\.Net Framework\\Windows Form\\ExcelDataReader\\ExceldataDisplay.vbproj",
       "packagesPath": "C:\\Users\\asimw\\.nuget\\packages\\",
       "outputPath": "D:\\Work\\Programming\\Visual Studio 2022\\C#\\.Net Framework\\Windows Form\\ExcelDataReader\\obj\\",
       "projectStyle": "PackageReference",

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "ExceldataDisplayAxontick", "ExceldataDisplayAxontick.vbproj", "{C3FEA640-4653-42D6-8943-57EA2AC2483F}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "ExceldataDisplay", "ExceldataDisplay.vbproj", "{C3FEA640-4653-42D6-8943-57EA2AC2483F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

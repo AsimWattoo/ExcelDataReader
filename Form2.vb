@@ -35,7 +35,6 @@
         Using ofd As OpenFileDialog = New OpenFileDialog() With {.Filter = "CSV files|*.csv"}
             If ofd.ShowDialog() = DialogResult.OK Then
                 currentlyOpennedFile = ofd.FileName
-                Form1.loadData(ofd.FileName, DateTime.Now)
             End If
         End Using
     End Sub

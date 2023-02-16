@@ -4,9 +4,13 @@ Imports exc = Microsoft.Office.Interop.Excel
 Public Class DataDisplayForm
 
     Private currentFile As String = ""
+    Private OccurrenceDate As DateTime
+    Private OccurrenceTime As DateTime
 
     Public Sub SetData(occurenceDate As DateTime, occurenceTime As DateTime, title As String, description As String, totalTime As String, file As String)
         currentFile = file
+        Me.OccurrenceDate = occurenceDate
+        Me.OccurrenceTime = occurenceTime
         lblTitle.Text = title
         lblDes.Text = description
         lblDate.Text = occurenceDate.ToString("dd/MM/yyyy")
@@ -31,6 +35,6 @@ Public Class DataDisplayForm
     End Function
 
     Private Sub btnOpen_Click(sender As Object, e As EventArgs) Handles btnOpen.Click
-        Process.Start("C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE", $"""{currentFile}""")
+        Process.Start("C:\Users\asimw\Downloads\Media Player\Media Player\Source Code\MFH Player_Code\bin\Debug\MFH Player.exe", $"{OccurrenceDate.ToString("dd-MM-yyyy")} {OccurrenceTime.ToString("HH:mm:ss")}")
     End Sub
 End Class

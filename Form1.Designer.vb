@@ -64,17 +64,17 @@ Partial Class Form1
         '
         'DataBindingSource1
         '
-        Me.DataBindingSource1.DataSource = GetType(ExceldataDisplayAxontick.data)
+        Me.DataBindingSource1.DataSource = GetType(ExceldataDisplay.data)
         '
         'DataBindingSource
         '
-        Me.DataBindingSource.DataSource = GetType(ExceldataDisplayAxontick.data)
+        Me.DataBindingSource.DataSource = GetType(ExceldataDisplay.data)
         '
         'Button1
         '
         Me.Button1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Button1.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Me.Button1.BackgroundImage = Global.ExceldataDisplayAxontick.My.Resources.Resources.WhatsApp_Image_2023_01_24_at_21_51_23
+        Me.Button1.BackgroundImage = Global.ExceldataDisplay.My.Resources.Resources.WhatsApp_Image_2023_01_24_at_21_51_23
         Me.Button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom
         Me.Button1.FlatAppearance.BorderColor = System.Drawing.Color.White
         Me.Button1.FlatAppearance.BorderSize = 0
