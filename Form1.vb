@@ -195,7 +195,15 @@ Public Class Form1
 
     'Parses time from the string
     Public Function ParseTime(_time As String) As DateTime
-        If _time.Length = 5 Then
+        If _time.Length = 1 And _time = "0" Then
+            Return DateTime.Parse("00:00:00")
+        ElseIf _time.Length = 4 Then
+            Dim minuteStr As String = _time.Substring(0, 2)
+            Dim secondStr As String = _time.Substring(2, 2)
+            Dim minute As Integer = Integer.Parse(minuteStr)
+            Dim second As Integer = Integer.Parse(secondStr)
+            Return DateTime.Parse($"00:{minute}:{second}")
+        ElseIf _time.Length = 5 Then
             Dim hourStr As String = _time.Substring(0, 1)
             Dim minuteStr As String = _time.Substring(1, 2)
             Dim secondStr As String = _time.Substring(3, 2)
@@ -264,7 +272,6 @@ Public Class Form1
             date_from_file = ParseDate(str_date_from_file)
         End If
 
-
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance)
         parsedData.Clear()
         parsedLines.Clear()
@@ -277,6 +284,18 @@ Public Class Form1
         lines = File.ReadAllLines(fileName, Encoding.GetEncoding("Shift-JIS")).ToList()
         dates.Add("")
         Dim data As String()
+
+        If currentPattern = "Pattern C" Then
+            Dim newLines As List(Of String) = New List(Of String)
+            For i As Integer = 0 To lines.Count - 1
+                If i > lines.Count Then
+                    Exit For
+                End If
+                newLines.Add(lines(i))
+                i += 3
+            Next
+            lines = newLines
+        End If
 
         Dim checkDate As Date = DateTime.Now.AddDays(-90)
         For i As Integer = 0 To lines.Count - 1
@@ -316,8 +335,10 @@ Public Class Form1
                             newData.Add(data(val))
                         End If
                     ElseIf val = ColumnData.TotalTimeColumn Then
-                        If currentPattern = "Pattern B" Or currentPattern = "Pattern C" Then
+                        If currentPattern = "Pattern B" Then
                             newData.Add(ParseTimeFromSeconds(Integer.Parse(data(val))).ToString("HH:mm:ss"))
+                        ElseIf currentPattern = "Pattern C" Then
+                            newData.Add(ParseTime(data(val)).ToString("HH:mm:ss"))
                         Else
                             newData.Add(data(val))
                         End If
