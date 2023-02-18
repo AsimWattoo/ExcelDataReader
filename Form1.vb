@@ -300,8 +300,17 @@ Public Class Form1
         Dim checkDate As Date = DateTime.Now.AddDays(-90)
         For i As Integer = 0 To lines.Count - 1
             data = lines(i).Split(",")
+
+            If data.Length <= ColumnData.DetailsColumn Then
+                Continue For
+            End If
+
             Dim newData As List(Of String) = New List(Of String)()
             Dim currentDate As String = data(ColumnData.DateColumn)
+
+            If currentDate.Contains("""") Then
+                Continue For
+            End If
 
             If currentPattern = "Pattern C" Then
                 currentDate = str_date_from_file
