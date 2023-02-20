@@ -10,9 +10,10 @@ Public Class Form1
     Private parsedLines As List(Of List(Of String)) = New List(Of List(Of String))
     Private patternObject As Form2 = Nothing
     Private ColumnData As detailsData1 = New detailsData1
+    Private fileSelectionPattern As String = ""
     Private parsedLineNew As Dictionary(Of String, List(Of String)) = New Dictionary(Of String, List(Of String))
     Private currentlyOpennedFile As String = Nothing
-    Private currentPattern As String = "Pattern A"
+    Private currentPattern As ApplicationMode = ApplicationMode.PatternA
     Dim folderWatcher As FileSystemWatcher
     Dim watcherThread As Thread
     Dim rowHeight As Integer = 100
@@ -118,6 +119,7 @@ Public Class Form1
         If patternObject.ShowDialog() = DialogResult.OK Then
             currentPattern = patternObject.pattern
             currentlyOpennedFile = patternObject.currentlyOpennedFile
+            fileSelectionPattern = patternObject.txbPattern.Text
             If Not String.IsNullOrEmpty(currentlyOpennedFile) Then
                 Dim fileInfo As FileInfo = New FileInfo(currentlyOpennedFile)
                 If fileInfo.Exists Then
@@ -133,7 +135,7 @@ Public Class Form1
 
                 End If
             End If
-            loadData(currentlyOpennedFile, DateTimePicker1.Value)
+            loadData(currentlyOpennedFile, fileSelectionPattern, DateTimePicker1.Value)
         End If
     End Sub
 
@@ -234,9 +236,10 @@ Public Class Form1
         Return DateTime.Parse($"{hours}:{minutes}:{remainingSeconds}")
     End Function
 
-    Public Sub loadData(fileName As String, startDate As Date)
+    'Loads data from the files
+    Public Sub loadData(folderName As String, fileSelectionPattern As String, startDate As Date)
 
-        If String.IsNullOrEmpty(fileName) Then
+        If String.IsNullOrEmpty(folderName) Then
             Return
         End If
 
@@ -244,31 +247,25 @@ Public Class Form1
         Dim str_date_from_file As String = ""
         Dim date_from_file As DateTime
 
-        If currentPattern = Nothing Then
-            ColumnData.DateColumn = 2
-            ColumnData.StartTimeColumn = 3
+        If currentPattern = ApplicationMode.PatternA Then
+            ColumnData.DateColumn = 1
+            ColumnData.StartTimeColumn = 2
             ColumnData.TotalTimeColumn = 4
             ColumnData.TitleColumn = 6
             ColumnData.DetailsColumn = 7
-        ElseIf currentPattern.Equals("Pattern A") Then
-            ColumnData.DateColumn = 2
-            ColumnData.StartTimeColumn = 3
-            ColumnData.TotalTimeColumn = 4
-            ColumnData.TitleColumn = 6
-            ColumnData.DetailsColumn = 7
-        ElseIf currentPattern.Equals("Pattern B") Then
+        ElseIf currentPattern = ApplicationMode.PatternB Then
             ColumnData.DateColumn = 4
             ColumnData.StartTimeColumn = 5
             ColumnData.TotalTimeColumn = 6
             ColumnData.TitleColumn = 7
             ColumnData.DetailsColumn = 8
-        ElseIf currentPattern.Equals("Pattern C") Then
+        ElseIf currentPattern = ApplicationMode.PatternC Then
             ColumnData.DateColumn = 1
             ColumnData.StartTimeColumn = 4
             ColumnData.TotalTimeColumn = 5
             ColumnData.TitleColumn = 6
             ColumnData.DetailsColumn = 7
-            str_date_from_file = fileName.Split("_").Last().Split(".").First()
+            str_date_from_file = folderName.Split("_").Last().Split(".").First()
             date_from_file = ParseDate(str_date_from_file)
         End If
 
@@ -281,11 +278,11 @@ Public Class Form1
         Dim table As DataTable = New DataTable()
         Dim items As List(Of Object) = New List(Of Object)()
         dates = New List(Of String)()
-        lines = File.ReadAllLines(fileName, Encoding.GetEncoding("Shift-JIS")).ToList()
+        lines = File.ReadAllLines(folderName, Encoding.GetEncoding("Shift-JIS")).ToList()
         dates.Add("")
         Dim data As String()
 
-        If currentPattern = "Pattern C" Then
+        If currentPattern = ApplicationMode.PatternC Then
             Dim newLines As List(Of String) = New List(Of String)
             For i As Integer = 0 To lines.Count - 1
                 If i > lines.Count Then
@@ -312,7 +309,7 @@ Public Class Form1
                 Continue For
             End If
 
-            If currentPattern = "Pattern C" Then
+            If currentPattern = ApplicationMode.PatternC Then
                 currentDate = str_date_from_file
             End If
 
@@ -322,9 +319,9 @@ Public Class Form1
 
             Dim d As Date
 
-            If currentPattern = "Pattern B" Then
+            If currentPattern = ApplicationMode.PatternB Or currentPattern = ApplicationMode.PatternA Then
                 d = ParseDate(currentDate)
-            ElseIf currentPattern = "Pattern C" Then
+            ElseIf currentPattern = ApplicationMode.PatternC Then
                 d = date_from_file
             Else
                 d = Date.Parse(currentDate)
@@ -338,18 +335,12 @@ Public Class Form1
             For val As Integer = 0 To data.Count - 1
                 If val = ColumnData.DateColumn Or val = ColumnData.StartTimeColumn Or val = ColumnData.TotalTimeColumn Or val = ColumnData.TitleColumn Or val = ColumnData.DetailsColumn Then
                     If val = ColumnData.StartTimeColumn Then
-                        If currentPattern = "Pattern B" Or currentPattern = "Pattern C" Then
-                            newData.Add(ParseTime(data(val)).ToString("HH:mm:ss"))
-                        Else
-                            newData.Add(data(val))
-                        End If
+                        newData.Add(ParseTime(data(val)).ToString("HH:mm:ss"))
                     ElseIf val = ColumnData.TotalTimeColumn Then
-                        If currentPattern = "Pattern B" Then
+                        If currentPattern = ApplicationMode.PatternB Then
                             newData.Add(ParseTimeFromSeconds(Integer.Parse(data(val))).ToString("HH:mm:ss"))
-                        ElseIf currentPattern = "Pattern C" Then
-                            newData.Add(ParseTime(data(val)).ToString("HH:mm:ss"))
                         Else
-                            newData.Add(data(val))
+                            newData.Add(ParseTime(data(val)).ToString("HH:mm:ss"))
                         End If
                     ElseIf val = ColumnData.DateColumn Then
                         newData.Insert(0, currentDate)
