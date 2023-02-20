@@ -62,9 +62,9 @@ Partial Class Form2
         '
         Me.Openbtn.Location = New System.Drawing.Point(12, 139)
         Me.Openbtn.Name = "Openbtn"
-        Me.Openbtn.Size = New System.Drawing.Size(75, 23)
+        Me.Openbtn.Size = New System.Drawing.Size(94, 23)
         Me.Openbtn.TabIndex = 15
-        Me.Openbtn.Text = "Open File"
+        Me.Openbtn.Text = "Select Folder"
         Me.Openbtn.UseVisualStyleBackColor = True
         '
         'Label2

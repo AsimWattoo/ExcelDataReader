@@ -110,7 +110,7 @@ Public Class Form1
 
     Private Sub DateTimePicker1_ValueChanged(sender As Object, e As EventArgs) Handles DateTimePicker1.ValueChanged
         If DateTimePicker1.Created Then
-            loadData(currentlyOpennedFile, DateTimePicker1.Value)
+            loadData(currentlyOpennedFile, fileSelectionPattern, DateTimePicker1.Value)
         End If
     End Sub
 
@@ -118,7 +118,7 @@ Public Class Form1
         patternObject = New Form2(currentPattern)
         If patternObject.ShowDialog() = DialogResult.OK Then
             currentPattern = patternObject.pattern
-            currentlyOpennedFile = patternObject.currentlyOpennedFile
+            currentlyOpennedFile = patternObject.selectedFolder
             fileSelectionPattern = patternObject.txbPattern.Text
             If Not String.IsNullOrEmpty(currentlyOpennedFile) Then
                 Dim fileInfo As FileInfo = New FileInfo(currentlyOpennedFile)
@@ -146,7 +146,7 @@ Public Class Form1
     End Sub
 
     Public Sub StartDataLoad()
-        loadData(currentlyOpennedFile, DateTimePicker1.Value)
+        loadData(currentlyOpennedFile, fileSelectionPattern, DateTimePicker1.Value)
     End Sub
 
     'Fires when the folder is renamed
@@ -236,6 +236,10 @@ Public Class Form1
         Return DateTime.Parse($"{hours}:{minutes}:{remainingSeconds}")
     End Function
 
+    Private Function getFileName(filePath As String) As String
+        Return filePath.Split("\").Last().Split(".").First()
+    End Function
+
     'Loads data from the files
     Public Sub loadData(folderName As String, fileSelectionPattern As String, startDate As Date)
 
@@ -260,13 +264,11 @@ Public Class Form1
             ColumnData.TitleColumn = 7
             ColumnData.DetailsColumn = 8
         ElseIf currentPattern = ApplicationMode.PatternC Then
-            ColumnData.DateColumn = 1
-            ColumnData.StartTimeColumn = 4
-            ColumnData.TotalTimeColumn = 5
-            ColumnData.TitleColumn = 6
-            ColumnData.DetailsColumn = 7
-            str_date_from_file = folderName.Split("_").Last().Split(".").First()
-            date_from_file = ParseDate(str_date_from_file)
+            ColumnData.DateColumn = 0
+            ColumnData.StartTimeColumn = 5
+            ColumnData.TotalTimeColumn = 6
+            ColumnData.TitleColumn = 7
+            ColumnData.DetailsColumn = 8
         End If
 
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance)
@@ -278,9 +280,31 @@ Public Class Form1
         Dim table As DataTable = New DataTable()
         Dim items As List(Of Object) = New List(Of Object)()
         dates = New List(Of String)()
-        lines = File.ReadAllLines(folderName, Encoding.GetEncoding("Shift-JIS")).ToList()
+        lines = New List(Of String)()
         dates.Add("")
         Dim data As String()
+
+        Dim files As List(Of String) = Directory.EnumerateFiles(folderName).ToList()
+
+        For Each str As String In files
+            Dim fileName As String = getFileName(str)
+            If fileName.Contains(fileSelectionPattern) Then
+                Dim l As String() = File.ReadAllLines(str)
+
+                If currentPattern = ApplicationMode.PatternC Then
+                    str_date_from_file = fileName.Split("_").Last().Split(".").First()
+                    date_from_file = ParseDate(str_date_from_file)
+                    Dim parsedDate As String = date_from_file.ToString("dd-MM-yyyy")
+                    For Each line As String In l
+                        lines.Add($"{parsedDate},{line}")
+                    Next
+                Else
+                    lines.AddRange(l.ToList())
+                End If
+
+            End If
+        Next
+
 
         If currentPattern = ApplicationMode.PatternC Then
             Dim newLines As List(Of String) = New List(Of String)
@@ -309,10 +333,6 @@ Public Class Form1
                 Continue For
             End If
 
-            If currentPattern = ApplicationMode.PatternC Then
-                currentDate = str_date_from_file
-            End If
-
             If currentDate.Equals("Program Date") Then
                 Continue For
             End If
@@ -321,8 +341,6 @@ Public Class Form1
 
             If currentPattern = ApplicationMode.PatternB Or currentPattern = ApplicationMode.PatternA Then
                 d = ParseDate(currentDate)
-            ElseIf currentPattern = ApplicationMode.PatternC Then
-                d = date_from_file
             Else
                 d = Date.Parse(currentDate)
             End If
@@ -484,6 +502,11 @@ Public Class Form1
 
     'Fires when the cell is clicked
     Private Sub DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellClick
+
+        If e.RowIndex = -1 Or e.ColumnIndex = 0 Then
+            Return
+        End If
+
         Dim rowHeader As String = DataGridView1.Rows.Item(e.RowIndex).Cells.Item(0).Value
         Dim columnHeader As String = DataGridView1.Columns.Item(e.ColumnIndex).HeaderText
         Dim occurenceDate As DateTime = DateTime.Parse(columnHeader)

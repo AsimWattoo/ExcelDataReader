@@ -1,6 +1,6 @@
 ﻿Public Class Form2
     Public Property pattern As ApplicationMode
-    Public currentlyOpennedFile As String = Nothing
+    Public selectedFolder As String = Nothing
 
     Private Sub ComboBox1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles PatternComboBox.SelectedIndexChanged
         Dim patternText As String = PatternComboBox.Text
@@ -37,9 +37,9 @@
     End Sub
 
     Private Sub Openbtn_Click(sender As Object, e As EventArgs) Handles Openbtn.Click
-        Using ofd As OpenFileDialog = New OpenFileDialog() With {.Filter = "CSV files|*.csv"}
+        Using ofd As FolderBrowserDialog = New FolderBrowserDialog()
             If ofd.ShowDialog() = DialogResult.OK Then
-                currentlyOpennedFile = ofd.FileName
+                selectedFolder = ofd.SelectedPath
             End If
         End Using
     End Sub
