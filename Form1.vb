@@ -12,7 +12,7 @@ Public Class Form1
     Private ColumnData As detailsData1 = New detailsData1
     Private fileSelectionPattern As String = ""
     Private parsedLineNew As Dictionary(Of String, List(Of String)) = New Dictionary(Of String, List(Of String))
-    Private currentlyOpennedFile As String = Nothing
+    Private selectedFolder As String = Nothing
     Private currentPattern As ApplicationMode = ApplicationMode.PatternA
     Dim folderWatcher As FileSystemWatcher
     Dim watcherThread As Thread
@@ -88,12 +88,28 @@ Public Class Form1
                 Return
             End If
             e.Graphics.DrawRectangle(pen, New Rectangle(e.CellBounds.Left, e.CellBounds.Top, e.CellBounds.Width, rowHeight))
-            e.Graphics.DrawString(items(0), _font, Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + 5))
+            Dim title As String = items(0)
+            Dim fontSize As Integer = 10
+            Dim doubleLine As Boolean = False
+
+            If fontSize * title.Length > e.CellBounds.Width Then
+                e.Graphics.DrawString(title.Substring(0, title.Length / 2), _font, Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + 5))
+                e.Graphics.DrawString(title.Substring(title.Length / 2), _font, Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + 10 + fontSize))
+                doubleLine = True
+            Else
+                e.Graphics.DrawString(title, _font, Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + 5))
+            End If
             Dim startTime As DateTime = DateTime.Parse(items(1))
             Dim duration As DateTime = DateTime.Parse(items(2))
             Dim endTime As DateTime = startTime.AddMinutes(duration.Minute)
             endTime = endTime.AddHours(duration.Hour)
-            e.Graphics.DrawString($"{items(1)} ~ {endTime.Hour}:{ConvertNumber(endTime.Minute)}:{ConvertNumber(endTime.Second)} ({items(2)})", _font, Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + 30))
+            Dim additionalHeight As Integer = 0
+
+            If doubleLine Then
+                additionalHeight += 5 + fontSize
+            End If
+
+            e.Graphics.DrawString($"{items(1)} ~ {endTime.Hour}:{ConvertNumber(endTime.Minute)}:{ConvertNumber(endTime.Second)} ({items(2)})", _font, Brushes.Black, New PointF(e.CellBounds.Left, e.CellBounds.Top + 30 + additionalHeight))
             e.Handled = True
         End If
     End Sub
@@ -110,7 +126,7 @@ Public Class Form1
 
     Private Sub DateTimePicker1_ValueChanged(sender As Object, e As EventArgs) Handles DateTimePicker1.ValueChanged
         If DateTimePicker1.Created Then
-            loadData(currentlyOpennedFile, fileSelectionPattern, DateTimePicker1.Value)
+            loadData(selectedFolder, fileSelectionPattern, DateTimePicker1.Value)
         End If
     End Sub
 
@@ -118,12 +134,10 @@ Public Class Form1
         patternObject = New Form2(currentPattern)
         If patternObject.ShowDialog() = DialogResult.OK Then
             currentPattern = patternObject.pattern
-            currentlyOpennedFile = patternObject.selectedFolder
+            selectedFolder = patternObject.selectedFolder
             fileSelectionPattern = patternObject.txbPattern.Text
-            If Not String.IsNullOrEmpty(currentlyOpennedFile) Then
-                Dim fileInfo As FileInfo = New FileInfo(currentlyOpennedFile)
-                If fileInfo.Exists Then
-
+            If Not String.IsNullOrEmpty(selectedFolder) Then
+                If Directory.Exists(selectedFolder) Then
                     If watcherThread Is Nothing Then
                         watcherThread = New Thread(New ParameterizedThreadStart(AddressOf StartFolder_Watch))
                         watcherThread.Start()
@@ -135,37 +149,38 @@ Public Class Form1
 
                 End If
             End If
-            loadData(currentlyOpennedFile, fileSelectionPattern, DateTimePicker1.Value)
+            loadData(selectedFolder, fileSelectionPattern, DateTimePicker1.Value)
         End If
     End Sub
 
     'Fires when the files in the folder changes
     Public Sub OnFolderChanged(ByVal source As Object, ByVal e As FileSystemEventArgs)
-        currentlyOpennedFile = e.FullPath
         Me.Invoke(AddressOf StartDataLoad)
     End Sub
 
     Public Sub StartDataLoad()
-        loadData(currentlyOpennedFile, fileSelectionPattern, DateTimePicker1.Value)
+        loadData(selectedFolder, fileSelectionPattern, DateTimePicker1.Value)
     End Sub
 
     'Fires when the folder is renamed
     Public Sub OnFolderRenamed(ByVal source As Object, ByVal e As RenamedEventArgs)
-        currentlyOpennedFile = e.FullPath
+        selectedFolder = e.FullPath
         Me.Invoke(AddressOf StartDataLoad)
     End Sub
 
     Public Sub StartFolder_Watch(data As Object)
-        Dim fileInfo As FileInfo = New FileInfo(currentlyOpennedFile)
+        Dim fileInfo As FileInfo = New FileInfo(selectedFolder)
         folderWatcher = New FileSystemWatcher(fileInfo.DirectoryName)
 
         AddHandler folderWatcher.Changed, AddressOf OnFolderChanged
+        AddHandler folderWatcher.Created, AddressOf OnFolderChanged
         AddHandler folderWatcher.Renamed, AddressOf OnFolderRenamed
+        AddHandler folderWatcher.Deleted, AddressOf OnFolderChanged
 
         Try
             With folderWatcher
                 .EnableRaisingEvents = True
-                .WaitForChanged(WatcherChangeTypes.Renamed Or WatcherChangeTypes.Changed)
+                .WaitForChanged(WatcherChangeTypes.All)
                 .Filter = "*.csv"
                 .NotifyFilter = (NotifyFilters.FileName Or NotifyFilters.DirectoryName)
             End With
@@ -486,7 +501,7 @@ Public Class Form1
         Next
 
         For i As Integer = 1 To DataGridView1.Columns.Count - 1
-            DataGridView1.Columns(i).Width = 250
+            DataGridView1.Columns(i).Width = 300
         Next
 
     End Sub
@@ -538,7 +553,7 @@ Public Class Form1
         End If
 
         Dim dataForm As DataDisplayForm = New DataDisplayForm()
-        dataForm.SetData(occurenceDate, DateTime.Parse(items(index)(1)), items(index)(3), items(index)(4), items(index)(2), currentlyOpennedFile)
+        dataForm.SetData(occurenceDate, DateTime.Parse(items(index)(1)), items(index)(3), items(index)(4), items(index)(2), selectedFolder)
         dataForm.ShowDialog()
     End Sub
 

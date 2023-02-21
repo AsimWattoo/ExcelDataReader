@@ -23,7 +23,6 @@ Partial Class DataDisplayForm
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.lblTitle = New System.Windows.Forms.Label()
-        Me.lblDes = New System.Windows.Forms.Label()
         Me.lblStart = New System.Windows.Forms.Label()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label3 = New System.Windows.Forms.Label()
@@ -35,6 +34,7 @@ Partial Class DataDisplayForm
         Me.Label6 = New System.Windows.Forms.Label()
         Me.lblDate = New System.Windows.Forms.Label()
         Me.btnOpen = New System.Windows.Forms.Button()
+        Me.lblDes = New System.Windows.Forms.TextBox()
         Me.SuspendLayout()
         '
         'lblTitle
@@ -46,16 +46,6 @@ Partial Class DataDisplayForm
         Me.lblTitle.Size = New System.Drawing.Size(42, 15)
         Me.lblTitle.TabIndex = 0
         Me.lblTitle.Text = "lblTitle"
-        '
-        'lblDes
-        '
-        Me.lblDes.AutoSize = True
-        Me.lblDes.BackColor = System.Drawing.SystemColors.ButtonHighlight
-        Me.lblDes.Location = New System.Drawing.Point(131, 77)
-        Me.lblDes.Name = "lblDes"
-        Me.lblDes.Size = New System.Drawing.Size(41, 15)
-        Me.lblDes.TabIndex = 1
-        Me.lblDes.Text = "Label1"
         '
         'lblStart
         '
@@ -167,12 +157,24 @@ Partial Class DataDisplayForm
         Me.btnOpen.Text = "Open"
         Me.btnOpen.UseVisualStyleBackColor = True
         '
+        'lblDes
+        '
+        Me.lblDes.BackColor = System.Drawing.SystemColors.ButtonHighlight
+        Me.lblDes.Location = New System.Drawing.Point(131, 71)
+        Me.lblDes.Multiline = True
+        Me.lblDes.Name = "lblDes"
+        Me.lblDes.ReadOnly = True
+        Me.lblDes.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
+        Me.lblDes.Size = New System.Drawing.Size(360, 51)
+        Me.lblDes.TabIndex = 13
+        '
         'DataDisplayForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 15.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.ButtonHighlight
-        Me.ClientSize = New System.Drawing.Size(800, 358)
+        Me.ClientSize = New System.Drawing.Size(518, 358)
+        Me.Controls.Add(Me.lblDes)
         Me.Controls.Add(Me.btnOpen)
         Me.Controls.Add(Me.lblDate)
         Me.Controls.Add(Me.Label6)
@@ -184,7 +186,6 @@ Partial Class DataDisplayForm
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.lblStart)
-        Me.Controls.Add(Me.lblDes)
         Me.Controls.Add(Me.lblTitle)
         Me.Name = "DataDisplayForm"
         Me.Text = "DataDisplayForm"
@@ -194,7 +195,6 @@ Partial Class DataDisplayForm
     End Sub
 
     Friend WithEvents lblTitle As Label
-    Friend WithEvents lblDes As Label
     Friend WithEvents lblStart As Label
     Friend WithEvents Label2 As Label
     Friend WithEvents Label3 As Label
@@ -206,4 +206,5 @@ Partial Class DataDisplayForm
     Friend WithEvents Label6 As Label
     Friend WithEvents lblDate As Label
     Friend WithEvents btnOpen As Button
+    Friend WithEvents lblDes As TextBox
 End Class
